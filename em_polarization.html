@@ -259,9 +259,14 @@ canvas{display:block;border-radius:4px;width:100%}
   letter-spacing: 0.05em;
 }
 
-/* ── Responsive Queries ── */
+/* ── Responsive Queries (UPDATED HERE) ── */
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; }
+  
+  /* These two order rules flip the left/right columns on mobile */
+  .left { order: 2; }
+  .right { order: 1; }
+  
   .wrow { grid-template-columns: 1fr; }
   .pgrid { grid-template-columns: 1fr 1fr; }
 }
