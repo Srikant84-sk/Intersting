@@ -4,271 +4,101 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EM Polarization Visualizer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #06090f;
-  --panel: #0b1420;
-  --border: #162030;
-  --cx: #00d8ff;
-  --cy: #ff6b35;
-  --ellipse: #c026d3;
-  --ellipse-hi: #e879f9;
-  --green: #22d3a5;
-  --purple: #a78bfa;
-  --text: #8fb8cc;
-  --muted: #3a5a70;
-  --white: #e8f4ff;
+  --bg:#06090f; --panel:#0b1420; --border:#162030;
+  --cx:#00d8ff; --cy:#ff6b35; --ellipse:#c026d3; --ellipse-hi:#e879f9;
+  --green:#22d3a5; --purple:#a78bfa; --text:#8fb8cc; --muted:#3a5a70; --white:#e8f4ff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Space Mono',monospace;
-  min-height:100vh;
-  padding:18px;
-  font-size:12px;
-}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:14px}
 
-/* ── Header & Navigation ── */
-.hdr{text-align:center;margin-bottom:20px}
-.hdr h1{
-  font-family:'Orbitron',sans-serif;
-  font-weight:900;font-size:clamp(1.1rem, 4vw, 1.45rem);
-  letter-spacing:.18em;color:var(--cx);
-  text-shadow:0 0 24px rgba(0,216,255,.55);
-}
-.hdr p{color:var(--muted);font-size:.65rem;letter-spacing:.12em;margin-top:3px}
+/* ── Header ── */
+.hdr{text-align:center;margin-bottom:14px}
+.hdr h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1rem,5vw,1.4rem);letter-spacing:.15em;color:var(--cx);text-shadow:0 0 22px rgba(0,216,255,.5)}
+.hdr p{color:var(--muted);font-size:.6rem;letter-spacing:.1em;margin-top:3px}
 
-.nav-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-.btn-toggle {
-  background: rgba(0, 216, 255, 0.08);
-  border: 1px solid var(--cx);
-  color: var(--cx);
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  padding: 8px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-}
-.btn-toggle:hover {
-  background: var(--cx);
-  color: var(--bg);
-  box-shadow: 0 0 12px rgba(0,216,255,0.4);
-}
+/* ── Toggle ── */
+.nav-wrap{display:flex;justify-content:center;margin-bottom:14px}
+.btn-toggle{background:rgba(0,216,255,.08);border:1px solid var(--cx);color:var(--cx);font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.15em;padding:7px 22px;border-radius:4px;cursor:pointer;transition:all .2s}
+.btn-toggle:hover{background:var(--cx);color:var(--bg);box-shadow:0 0 12px rgba(0,216,255,.4)}
 
-/* ── Layout ── */
-.layout{
-  display:grid;
-  grid-template-columns:220px 1fr;
-  gap:14px;
-  max-width:800px;
-  margin:0 auto;
-}
-.left{display:flex;flex-direction:column;gap:12px}
-.right{display:flex;flex-direction:column;gap:12px}
+/* ── Wrapper: single column, max-width centred ── */
+.wrapper{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
 
 /* ── Panel ── */
-.panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:14px;
-}
-.ptitle{
-  font-family:'Orbitron',sans-serif;
-  font-size:.55rem;letter-spacing:.22em;
-  color:var(--muted);text-transform:uppercase;
-  margin-bottom:12px;
-  padding-bottom:7px;
-  border-bottom:1px solid var(--border);
-}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px}
+.ptitle{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:11px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 
-/* ── Sliders ── */
-.cg{margin-bottom:13px}
-.cg:last-child{margin-bottom:0}
-.cl{display:flex;justify-content:space-between;margin-bottom:5px;font-size:.7rem}
-.cl .nm{color:var(--muted)}
-.cl .vl{font-weight:700}
-.vl.cx{color:var(--cx)}
-.vl.cy{color:var(--cy)}
-.vl.ph{color:var(--purple)}
-.vl.sp{color:var(--green)}
+/* ── Main canvas ── */
+.canvas-wrap{display:flex;flex-direction:column;align-items:center}
+#mc{width:100%;border-radius:4px;display:block}
+#rot-ind{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.1em;margin-top:7px;color:var(--muted);text-align:center}
 
-input[type=range]{
-  -webkit-appearance:none;width:100%;height:3px;
-  border-radius:2px;outline:none;cursor:pointer;
-  border:none;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:13px;height:13px;
-  border-radius:50%;cursor:pointer;
-  border:2px solid var(--bg);
-  transition:transform .1s;
-}
-input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.25)}
-.r-cx{background:linear-gradient(to right,var(--cx) var(--p,40%),var(--border) var(--p,40%))}
-.r-cx::-webkit-slider-thumb{background:var(--cx);box-shadow:0 0 8px var(--cx)}
-.r-cy{background:linear-gradient(to right,var(--cy) var(--p,30%),var(--border) var(--p,30%))}
-.r-cy::-webkit-slider-thumb{background:var(--cy);box-shadow:0 0 8px var(--cy)}
-.r-ph{background:linear-gradient(to right,var(--purple) var(--p,25%),var(--border) var(--p,25%))}
-.r-ph::-webkit-slider-thumb{background:var(--purple);box-shadow:0 0 8px var(--purple)}
-.r-sp{background:linear-gradient(to right,var(--green) var(--p,30%),var(--border) var(--p,30%))}
-.r-sp::-webkit-slider-thumb{background:var(--green);box-shadow:0 0 8px var(--green)}
-
-/* ── Presets ── */
-.presets{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.pb{
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--muted);
-  font-family:'Space Mono',monospace;
-  font-size:.6rem;
-  padding:5px 3px;
-  border-radius:4px;
-  cursor:pointer;
-  transition:all .15s;
-  letter-spacing:.03em;
-}
-.pb:hover{border-color:var(--cx);color:var(--cx);background:rgba(0,216,255,.06)}
-
-/* ── Equation ── */
-.eq{
-  font-size:.68rem;
-  line-height:1.8;
-  border-top:1px solid var(--border);
-  padding-top:9px;
-  margin-top:4px;
-  color:var(--muted);
-}
-.eq .xc{color:var(--cx)}
-.eq .yc{color:var(--cy)}
-.eq .pc{color:var(--purple)}
-
-/* ── Params ── */
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px}
-.pn{font-size:.58rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
-.pv{
-  font-family:'Orbitron',sans-serif;
-  font-size:.9rem;font-weight:700;
-  line-height:1.1;
-}
-.pv.big{font-size:1.1rem}
-.pv.cx-c{color:var(--cx)}
-.pv.cy-c{color:var(--cy)}
-.pv.pu-c{color:var(--purple)}
-.pv.gr-c{color:var(--green)}
-.pv.wh-c{color:var(--white)}
-
-.badge{
-  display:inline-block;
-  padding:2px 7px;
-  border-radius:3px;
-  font-size:.6rem;
-  font-family:'Orbitron',sans-serif;
-  font-weight:700;
-  letter-spacing:.08em;
-}
+/* ── State badge strip ── */
+.state-strip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.ss-label{font-size:.6rem;color:var(--muted);font-family:'Orbitron',sans-serif;letter-spacing:.08em}
+.state-big{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;line-height:1}
+.state-linear{color:var(--cx)}.state-circular{color:var(--green)}.state-elliptical{color:var(--ellipse-hi)}
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:.58rem;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:.07em}
 .b-rh{background:rgba(255,107,53,.15);color:var(--cy);border:1px solid var(--cy)}
 .b-lh{background:rgba(192,38,211,.15);color:var(--ellipse-hi);border:1px solid var(--ellipse-hi)}
 .b-na{background:rgba(58,90,112,.15);color:var(--muted);border:1px solid var(--border)}
 
-.state-linear{color:var(--cx)!important}
-.state-circular{color:var(--green)!important}
-.state-elliptical{color:var(--ellipse-hi)!important}
+/* ── Analysis mini-grid ── */
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ai .an{font-size:.53rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.ai .av{font-family:'Orbitron',sans-serif;font-size:.82rem;font-weight:700}
+.av.cx-c{color:var(--cx)}.av.cy-c{color:var(--cy)}.av.pu-c{color:var(--purple)}.av.gr-c{color:var(--green)}
 
-/* ── Canvas area ── */
-.canvas-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width: 100%;
-}
-canvas{display:block;border-radius:4px;width:100%}
-#mc{background:transparent}
+/* ── Controls row ── */
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── Sliders ── */
+.cg{margin-bottom:11px}.cg:last-child{margin-bottom:0}
+.cl{display:flex;justify-content:space-between;margin-bottom:5px;font-size:.68rem}
+.cl .nm{color:var(--muted)}.cl .vl{font-weight:700}
+.vl.cx{color:var(--cx)}.vl.cy{color:var(--cy)}.vl.ph{color:var(--purple)}.vl.sp{color:var(--green)}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;outline:none;cursor:pointer;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;cursor:pointer;border:2px solid var(--bg);transition:transform .1s}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.3)}
+.r-cx{background:linear-gradient(to right,var(--cx) var(--p,40%),var(--border) var(--p,40%))}.r-cx::-webkit-slider-thumb{background:var(--cx);box-shadow:0 0 8px var(--cx)}
+.r-cy{background:linear-gradient(to right,var(--cy) var(--p,30%),var(--border) var(--p,30%))}.r-cy::-webkit-slider-thumb{background:var(--cy);box-shadow:0 0 8px var(--cy)}
+.r-ph{background:linear-gradient(to right,var(--purple) var(--p,25%),var(--border) var(--p,25%))}.r-ph::-webkit-slider-thumb{background:var(--purple);box-shadow:0 0 8px var(--purple)}
+.r-sp{background:linear-gradient(to right,var(--green) var(--p,30%),var(--border) var(--p,30%))}.r-sp::-webkit-slider-thumb{background:var(--green);box-shadow:0 0 8px var(--green)}
+
+/* ── Equation ── */
+.eq{font-size:.66rem;line-height:1.9;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;color:var(--muted)}
+.eq .xc{color:var(--cx)}.eq .yc{color:var(--cy)}.eq .pc{color:var(--purple)}
+
+/* ── Presets ── */
+.presets{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px}
+.pb{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;font-size:.58rem;padding:5px 3px;border-radius:4px;cursor:pointer;transition:all .15s;letter-spacing:.02em;text-align:center}
+.pb:hover{border-color:var(--cx);color:var(--cx);background:rgba(0,216,255,.06)}
 
 /* ── Waveform row ── */
-.wrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.wlbl{
-  font-family:'Orbitron',sans-serif;
-  font-size:.55rem;letter-spacing:.12em;
-  margin-bottom:6px;
-}
-.wlbl.lx{color:var(--cx)}
-.wlbl.ly{color:var(--cy)}
-#wx,#wy{width:100%;height:80px}
+.wrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wlbl{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.1em;margin-bottom:5px}
+.wlbl.lx{color:var(--cx)}.wlbl.ly{color:var(--cy)}
+#wx,#wy{width:100%;height:72px;display:block;border-radius:3px}
 
-/* ── Rotation badge ── */
-#rot-ind{
-  font-family:'Orbitron',sans-serif;
-  font-size:.6rem;letter-spacing:.1em;
-  margin-top:8px;
-  color:var(--muted);
-  text-align: center;
-}
+/* ── Theory ── */
+#theory-view{display:none}
+.theory-content{font-size:.82rem;line-height:1.75}
+.theory-content h2{font-family:'Orbitron',sans-serif;color:var(--cx);font-size:1rem;letter-spacing:.08em;margin:12px 0 10px;border-bottom:1px solid var(--border);padding-bottom:5px}
+.theory-content h3{font-family:'Orbitron',sans-serif;color:var(--cy);font-size:.85rem;margin:16px 0 7px}
+.theory-content p{margin-bottom:12px}
+.theory-content ul{margin-left:18px;margin-bottom:12px}
+.theory-content li{margin-bottom:7px}
+.theory-content strong{color:var(--white)}
+.math-block{background:rgba(0,0,0,.3);border:1px solid var(--border);border-left:3px solid var(--ellipse-hi);padding:11px;margin:12px 0;border-radius:4px;font-family:'Space Mono',monospace;font-size:.95rem;color:var(--ellipse-hi);text-align:center;letter-spacing:.05em}
 
-/* ── Theory Section ── */
-#theory-view {
-  display: none;
-  grid-column: 1 / -1; 
-}
-.theory-content {
-  font-size: 0.85rem;
-  line-height: 1.7;
-}
-.theory-content h2 {
-  font-family: 'Orbitron', sans-serif;
-  color: var(--cx);
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
-  margin: 10px 0 12px 0;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 6px;
-}
-.theory-content h3 {
-  font-family: 'Orbitron', sans-serif;
-  color: var(--cy);
-  font-size: 0.9rem;
-  margin: 18px 0 8px 0;
-}
-.theory-content p { margin-bottom: 14px; }
-.theory-content ul { margin-left: 20px; margin-bottom: 14px; }
-.theory-content li { margin-bottom: 8px; }
-.theory-content strong { color: var(--white); }
-.theory-content em { color: var(--muted); font-style: normal; font-size: 0.8rem; }
-.math-block {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--ellipse-hi);
-  padding: 12px;
-  margin: 14px 0;
-  border-radius: 4px;
-  font-family: 'Space Mono', monospace;
-  font-size: 1rem;
-  color: var(--ellipse-hi);
-  text-align: center;
-  letter-spacing: 0.05em;
-}
-
-/* ── Responsive Queries (UPDATED HERE) ── */
-@media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; }
-  
-  /* These two order rules flip the left/right columns on mobile */
-  .left { order: 2; }
-  .right { order: 1; }
-  
-  .wrow { grid-template-columns: 1fr; }
-  .pgrid { grid-template-columns: 1fr 1fr; }
+@media(max-width:480px){
+  .ctrl-row{grid-template-columns:1fr}
+  .agrid{grid-template-columns:1fr 1fr}
+  .presets{grid-template-columns:1fr 1fr 1fr 1fr}
+  .wrow{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -276,43 +106,60 @@ canvas{display:block;border-radius:4px;width:100%}
 
 <div class="hdr">
   <h1>EM WAVE POLARIZATION</h1>
-  <p>TRANSVERSE FIELD LISSAJOUS VISUALIZER · REAL-TIME PARAMETRIC TRACE</p>
+  <p>TRANSVERSE FIELD LISSAJOUS · REAL-TIME PARAMETRIC TRACE</p>
 </div>
 
 <div class="nav-wrap">
   <button class="btn-toggle" id="btn-toggle">View Theory</button>
 </div>
 
-<div class="layout" id="viz-view">
-  <div class="left">
+<!-- ═══════════════════════════════════════════════════ VISUALIZER ═══════ -->
+<div class="wrapper" id="viz-view">
+
+  <!-- 1 ── MAIN CANVAS (top) -->
+  <div class="panel canvas-wrap">
+    <div class="ptitle" style="width:100%;text-align:center">POLARIZATION ELLIPSE — E-FIELD LOCUS</div>
+    <canvas id="mc"></canvas>
+
+    <!-- State + handedness directly under canvas -->
+    <div class="state-strip">
+      <span class="ss-label">STATE</span>
+      <span class="state-big state-circular" id="p-state">Circular</span>
+      <div id="p-hand"><span class="badge b-rh">RHCP</span></div>
+      <div id="rot-ind" style="margin-left:auto">↻ RHCP · CCW</div>
+    </div>
+  </div>
+
+  <!-- 2 ── ANALYSIS -->
+  <div class="panel">
+    <div class="ptitle">Analysis</div>
+    <div class="agrid">
+      <div class="ai"><div class="an">Tilt τ</div><div class="av pu-c" id="p-tilt">0.0°</div></div>
+      <div class="ai"><div class="an">Axial Ratio</div><div class="av gr-c" id="p-ar">1.00</div></div>
+      <div class="ai"><div class="an">|E| peak</div><div class="av cx-c" id="p-em">4.00</div></div>
+      <div class="ai"><div class="an">Phase</div><div class="av pu-c" id="p-pfrac">π/2</div></div>
+    </div>
+  </div>
+
+  <!-- 3 ── CONTROLS (below canvas) -->
+  <div class="ctrl-row">
+
     <div class="panel">
       <div class="ptitle">Field Parameters</div>
       <div class="cg">
-        <div class="cl">
-          <span class="nm">Ex Amplitude</span>
-          <span class="vl cx" id="d-ex">4.0</span>
-        </div>
+        <div class="cl"><span class="nm">Ex Amplitude</span><span class="vl cx" id="d-ex">4.0</span></div>
         <input type="range" class="r-cx" id="r-ex" min="0" max="10" step="0.1" value="4">
       </div>
       <div class="cg">
-        <div class="cl">
-          <span class="nm">Ey Amplitude</span>
-          <span class="vl cy" id="d-ey">4.0</span>
-        </div>
+        <div class="cl"><span class="nm">Ey Amplitude</span><span class="vl cy" id="d-ey">4.0</span></div>
         <input type="range" class="r-cy" id="r-ey" min="0" max="10" step="0.1" value="4">
       </div>
       <div class="cg">
-        <div class="cl">
-          <span class="nm">Phase  Δφ</span>
-          <span class="vl ph" id="d-ph">90°</span>
-        </div>
+        <div class="cl"><span class="nm">Phase  Δφ</span><span class="vl ph" id="d-ph">90°</span></div>
         <input type="range" class="r-ph" id="r-ph" min="0" max="360" step="1" value="90">
       </div>
       <div class="cg">
-        <div class="cl">
-          <span class="nm">Speed  ω</span>
-          <span class="vl sp" id="d-sp">1.0×</span>
-        </div>
+        <div class="cl"><span class="nm">Speed  ω</span><span class="vl sp" id="d-sp">1.0×</span></div>
         <input type="range" class="r-sp" id="r-sp" min="0.1" max="3" step="0.1" value="1">
       </div>
       <div class="eq">
@@ -321,479 +168,268 @@ canvas{display:block;border-radius:4px;width:100%}
       </div>
     </div>
 
-    <div class="panel">
-      <div class="ptitle">Presets</div>
-      <div class="presets">
-        <button class="pb" onclick="preset(4,0,0)">H-Linear</button>
-        <button class="pb" onclick="preset(0,4,0)">V-Linear</button>
-        <button class="pb" onclick="preset(3,3,45)">Linear 45°</button>
-        <button class="pb" onclick="preset(4,4,90)">RHCP</button>
-        <button class="pb" onclick="preset(4,4,270)">LHCP</button>
-        <button class="pb" onclick="preset(5,2,60)">RH Ellip</button>
-        <button class="pb" onclick="preset(5,2,240)">LH Ellip</button>
-        <button class="pb" onclick="preset(4,4,180)">Anti-Linear</button>
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <div>
+        <div class="ptitle">Presets</div>
+        <div class="presets">
+          <button class="pb" onclick="preset(4,0,0)">H-Lin</button>
+          <button class="pb" onclick="preset(0,4,0)">V-Lin</button>
+          <button class="pb" onclick="preset(3,3,45)">45°</button>
+          <button class="pb" onclick="preset(4,4,180)">180°</button>
+          <button class="pb" onclick="preset(4,4,90)">RHCP</button>
+          <button class="pb" onclick="preset(4,4,270)">LHCP</button>
+          <button class="pb" onclick="preset(5,2,60)">RH-El</button>
+          <button class="pb" onclick="preset(5,2,240)">LH-El</button>
+        </div>
       </div>
     </div>
 
+  </div>
+
+  <!-- 4 ── WAVEFORMS -->
+  <div class="wrow">
     <div class="panel">
-      <div class="ptitle">Analysis</div>
-      <div class="pgrid">
-        <div class="pi">
-          <div class="pn">State</div>
-          <div class="pv big state-circular" id="p-state">Circular</div>
-        </div>
-        <div class="pi">
-          <div class="pn">Handedness</div>
-          <div id="p-hand"><span class="badge b-rh">RHCP</span></div>
-        </div>
-        <div class="pi">
-          <div class="pn">Tilt Angle τ</div>
-          <div class="pv pu-c" id="p-tilt">0.0°</div>
-        </div>
-        <div class="pi">
-          <div class="pn">Axial Ratio</div>
-          <div class="pv gr-c" id="p-ar">1.00</div>
-        </div>
-        <div class="pi">
-          <div class="pn">|E| peak</div>
-          <div class="pv cx-c" id="p-em">4.00</div>
-        </div>
-        <div class="pi">
-          <div class="pn">Phase (rad)</div>
-          <div class="pv pu-c" id="p-pfrac">π/2</div>
-        </div>
-      </div>
+      <div class="wlbl lx">Ex(t) — HORIZONTAL</div>
+      <canvas id="wx"></canvas>
+    </div>
+    <div class="panel">
+      <div class="wlbl ly">Ey(t) — VERTICAL</div>
+      <canvas id="wy"></canvas>
     </div>
   </div>
 
-  <div class="right">
-    <div class="panel canvas-wrap">
-      <div class="ptitle" style="width:100%;text-align:center">POLARIZATION ELLIPSE — E-FIELD LOCUS</div>
-      <canvas id="mc"></canvas>
-      <div id="rot-ind">↻ RHCP · COUNTERCLOCKWISE (LOOKING INTO SOURCE)</div>
-    </div>
-    <div class="wrow">
-      <div class="panel">
-        <div class="wlbl lx">Ex(t) — HORIZONTAL</div>
-        <canvas id="wx"></canvas>
-      </div>
-      <div class="panel">
-        <div class="wlbl ly">Ey(t) — VERTICAL</div>
-        <canvas id="wy"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
+</div><!-- end viz-view -->
 
-<div class="layout" id="theory-view">
+<!-- ═══════════════════════════════════════════════════ THEORY ═══════════ -->
+<div class="wrapper" id="theory-view">
   <div class="panel theory-content">
-    <h2>1. Wave Polarization: The "Shape" of the Field</h2>
-    <p>In RF engineering and antenna design, efficient communication requires the transmitting and receiving antennas to be properly aligned. This alignment is dictated by polarization.</p>
-    <p>Polarization describes the 2D geometric shape traced by the tip of the Electric field vector (<strong>E</strong>) as the electromagnetic wave travels through space over time. Because a uniform plane wave travels in a single direction (e.g., along the z-axis), the electric field oscillates in the transverse plane (the xy-plane).</p>
-    <p>We define the polarization state by comparing the behavior of the x-component (E<sub>x</sub>) and the y-component (E<sub>y</sub>) of this field:</p>
+    <h2>1. Wave Polarization</h2>
+    <p>Polarization describes the 2D geometric shape traced by the tip of the <strong>E</strong>-field vector in the transverse plane as the wave propagates along z. The two orthogonal components are:</p>
+    <div class="math-block">Ex = Eox cos(ωt)&nbsp;&nbsp;&nbsp;&nbsp;Ey = Eoy cos(ωt + Δφ)</div>
     <ul>
-      <li><strong style="color:var(--cx)">Linear Polarization:</strong> The electric field oscillates back and forth along a single straight line. This occurs if the wave has only one spatial component, or if the E<sub>x</sub> and E<sub>y</sub> components are perfectly in phase (Δφ = 0° or 180°). Standard AM radio and Wi-Fi dipole antennas typically utilize linear polarization.</li>
-      <li><strong style="color:var(--green)">Circular Polarization (CP):</strong> The tip of the electric field traces a perfect circle over time. For this to occur, two strict mathematical conditions must be met:
-        <ul>
-          <li>The amplitudes of the components must be identical (E<sub>ox</sub> = E<sub>oy</sub>).</li>
-          <li>The phase difference between the components must be exactly 90° (Δφ = ±π/2).</li>
-        </ul>
-        <em>Note: FM radio, satellite communications, and GPS systems rely heavily on CP because it prevents signal loss when the receiver changes orientation.</em>
-      </li>
-      <li><strong style="color:var(--ellipse-hi)">Elliptical Polarization:</strong> This is the most common and general case in the real world. If the amplitudes are not perfectly equal, or if the phase difference is not exactly a multiple of 90° or 0°, the field traces an ellipse. In practice, most antennas designed to be circularly polarized exhibit slight elliptical polarization due to manufacturing imperfections.</li>
+      <li><strong style="color:var(--cx)">Linear:</strong> Eoy = 0, or Eox = 0, or Δφ = nπ. Field oscillates on a fixed line.</li>
+      <li><strong style="color:var(--green)">Circular:</strong> Eox = Eoy AND Δφ = ±90°. Field traces a circle; axial ratio = 1.</li>
+      <li><strong style="color:var(--ellipse-hi)">Elliptical:</strong> General case. Axial ratio = semi-major/semi-minor axis.</li>
     </ul>
-
-    <h2>2. The Poynting Vector: The "Power Pipe"</h2>
-    <p>While polarization describes the geometry and orientation of the wave, the Poynting Vector (<strong>S</strong>) defines the actual power transported through space. It bridges the Electric (<strong>E</strong>) and Magnetic (<strong>H</strong>) fields to calculate the directional power density of the wave.</p>
-    <p>The instantaneous Poynting vector is defined by the cross product of the two fields:</p>
-    <div class="math-block">S = E × H</div>
-    <ul>
-      <li><strong>Direction:</strong> The cross product mathematically ensures that <strong>S</strong> always points in the exact direction the wave is propagating.</li>
-      <li><strong>Magnitude:</strong> Measured in Watts per square meter (W/m²), the magnitude calculates exactly how much power is intersecting a specific cross-sectional area (such as a receiving antenna).</li>
-    </ul>
-    
-    <h3>Time-Average Power</h3>
-    <p>Because the <strong>E</strong> and <strong>H</strong> fields oscillate at incredibly high frequencies (millions or billions of cycles per second), the instantaneous power fluctuates too rapidly to be a useful metric. Instead, engineers rely on the Time-Average Power Density (<strong>S<sub>ave</sub></strong>), which measures the continuous, usable energy delivered to a receiver over a full cycle:</p>
-    <div class="math-block">S<sub>ave</sub> = ½ Re(E<sub>s</sub> × H<sub>s</sub><sup>*</sup>)</div>
-    <p><em>(Where E<sub>s</sub> and H<sub>s</sub><sup>*</sup> represent the complex phasor forms of the electric and magnetic fields, and the asterisk denotes the complex conjugate).</em></p>
+    <h3>Tilt Angle</h3>
+    <div class="math-block">τ = ½ arctan(2·Eox·Eoy·cos Δφ / (Eox² − Eoy²))</div>
+    <h3>Axial Ratio (from coherency matrix eigenvalues)</h3>
+    <div class="math-block">D = √[(Eox²−Eoy²)² + 4·Eox²·Eoy²·cos²Δφ]<br>a = √[(Eox²+Eoy²+D)/2]&nbsp;&nbsp;&nbsp;b = √[(Eox²+Eoy²−D)/2]<br>AR = a/b</div>
+    <h2>2. Handedness (IEEE Convention)</h2>
+    <p>Looking into the source: if the field rotates <strong>counterclockwise</strong> → RHCP (Right-Hand Circular Polarization). Clockwise → LHCP. Determined by sign of sin(Δφ): positive → RHCP.</p>
+    <h2>3. Poynting Vector</h2>
+    <div class="math-block">S = E × H&nbsp;&nbsp;&nbsp;&nbsp;[W/m²]</div>
+    <p>Direction: propagation direction (z-axis). Time-average power density:</p>
+    <div class="math-block">Save = ½ Re(Es × Hs*)</div>
+    <p>For a plane wave in free space: Save = |E|² / (2η₀), where η₀ ≈ 377 Ω is the impedance of free space.</p>
+    <h2>4. Polarization Loss Factor</h2>
+    <p>Mismatch between transmit polarization <strong>ρ̂t</strong> and receive polarization <strong>ρ̂r</strong> causes power loss:</p>
+    <div class="math-block">PLF = |ρ̂t · ρ̂r|²</div>
+    <p>Perfect alignment: PLF = 1. Orthogonal polarizations (e.g., RHCP → LHCP): PLF = 0 → complete rejection.</p>
   </div>
 </div>
 
 <script>
-// ── State ────────────────────────────────────────────────────────────────────
 const S = { Ex:4, Ey:4, ph:90, sp:1, t:0 };
-
-// ── Refs ─────────────────────────────────────────────────────────────────────
 const R = {
-  ex: document.getElementById('r-ex'),
-  ey: document.getElementById('r-ey'),
-  ph: document.getElementById('r-ph'),
-  sp: document.getElementById('r-sp'),
+  ex: document.getElementById('r-ex'), ey: document.getElementById('r-ey'),
+  ph: document.getElementById('r-ph'), sp: document.getElementById('r-sp'),
 };
-const mc  = document.getElementById('mc');
-const wxc = document.getElementById('wx');
-const wyc = document.getElementById('wy');
-const ctxM = mc.getContext('2d');
-const ctxX = wxc.getContext('2d');
-const ctxY = wyc.getContext('2d');
+const mc=document.getElementById('mc'), wxc=document.getElementById('wx'), wyc=document.getElementById('wy');
+const ctxM=mc.getContext('2d'), ctxX=wxc.getContext('2d'), ctxY=wyc.getContext('2d');
+let isTheory=false;
 
-// ── View Toggle Logic ─────────────────────────────────────────────────────────
-const btnToggle = document.getElementById('btn-toggle');
-const vizView = document.getElementById('viz-view');
-const theoryView = document.getElementById('theory-view');
-let isTheoryView = false;
-
-btnToggle.addEventListener('click', () => {
-  isTheoryView = !isTheoryView;
-  if (isTheoryView) {
-    vizView.style.display = 'none';
-    theoryView.style.display = 'block';
-    btnToggle.textContent = 'Back to Visualizer';
-  } else {
-    theoryView.style.display = 'none';
-    vizView.style.display = 'grid'; // Restore the layout grid
-    btnToggle.textContent = 'View Theory';
-    // Force a resize calculation when returning to visualizer
-    resizeAllCanvases();
-  }
+// ── Toggle ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-toggle').addEventListener('click',()=>{
+  isTheory=!isTheory;
+  document.getElementById('viz-view').style.display  = isTheory?'none':'flex';
+  document.getElementById('theory-view').style.display= isTheory?'flex':'none';
+  document.getElementById('btn-toggle').textContent   = isTheory?'Back to Visualizer':'View Theory';
+  if(!isTheory){ setTimeout(resizeAll,60); }
 });
 
-// ── Resize handlers ───────────────────────────────────────────────────────────
-function resizeWave(c) {
-  const rect = c.parentElement.getBoundingClientRect();
-  c.width  = Math.max(80, rect.width - 28);
-  c.height = 80;
+// ── Resize ───────────────────────────────────────────────────────────────────
+function resizeMain(){
+  const rect=mc.parentElement.getBoundingClientRect();
+  mc.width=Math.max(200,rect.width-28);
+  mc.height=Math.round(mc.width*0.62);
 }
-
-function resizeMain() {
-  const rect = mc.parentElement.getBoundingClientRect();
-  mc.width = Math.max(200, rect.width - 28);
-  // Cap the height so it doesn't get infinitely tall, maintaining aspect ratio roughly
-  mc.height = Math.min(320, mc.width * 0.7); 
+function resizeWave(c){
+  const rect=c.parentElement.getBoundingClientRect();
+  c.width=Math.max(80,rect.width-28); c.height=72;
 }
-
-function resizeAllCanvases() {
-  if (isTheoryView) return; // Don't resize if hidden
-  resizeWave(wxc); 
-  resizeWave(wyc);
-  resizeMain();
+function resizeAll(){
+  if(isTheory)return;
+  resizeMain(); resizeWave(wxc); resizeWave(wyc);
 }
+window.addEventListener('resize',resizeAll);
 
-// ── Physics helpers ───────────────────────────────────────────────────────────
-function phaseFrac(deg) {
-  const map = [[0,'0'],[30,'π/6'],[45,'π/4'],[60,'π/3'],[90,'π/2'],
-    [120,'2π/3'],[135,'3π/4'],[150,'5π/6'],[180,'π'],
-    [210,'7π/6'],[225,'5π/4'],[240,'4π/3'],[270,'3π/2'],
-    [300,'5π/3'],[315,'7π/4'],[330,'11π/6'],[360,'2π']];
-  for (const [d,s] of map) if (Math.abs(deg - d) < 1.5) return s;
-  return deg + '°';
+// ── Physics ──────────────────────────────────────────────────────────────────
+function phaseFrac(d){
+  const m=[[0,'0'],[30,'π/6'],[45,'π/4'],[60,'π/3'],[90,'π/2'],[120,'2π/3'],
+    [135,'3π/4'],[150,'5π/6'],[180,'π'],[210,'7π/6'],[225,'5π/4'],[240,'4π/3'],
+    [270,'3π/2'],[300,'5π/3'],[315,'7π/4'],[330,'11π/6'],[360,'2π']];
+  for(const[v,s]of m) if(Math.abs(d-v)<1.5)return s;
+  return d+'°';
 }
-
-function analyse(Ex, Ey, pdeg) {
-  const phi  = pdeg * Math.PI / 180;
-  const sp   = Math.sin(phi), cp = Math.cos(phi);
-  const eps  = 0.12;
-
-  let state = 'Elliptical';
-  if (Ex < eps || Ey < eps || Math.abs(sp) < 0.04) state = 'Linear';
-  else if (Math.abs(Ex - Ey) < eps) {
-    const n = ((pdeg % 360) + 360) % 360;
-    if (Math.abs(n - 90) < 4 || Math.abs(n - 270) < 4) state = 'Circular';
+function analyse(Ex,Ey,pdeg){
+  const phi=pdeg*Math.PI/180, sp=Math.sin(phi), cp=Math.cos(phi), eps=0.12;
+  let state='Elliptical';
+  if(Ex<eps||Ey<eps||Math.abs(sp)<0.04) state='Linear';
+  else if(Math.abs(Ex-Ey)<eps){
+    const n=((pdeg%360)+360)%360;
+    if(Math.abs(n-90)<4||Math.abs(n-270)<4) state='Circular';
   }
+  const hand=(state==='Linear')?'None':(sp>0?'RH':'LH');
+  let tilt=0;
+  if(Math.abs(Ex*Ex-Ey*Ey)>0.01) tilt=0.5*Math.atan2(2*Ex*Ey*cp,Ex*Ex-Ey*Ey)*180/Math.PI;
+  else tilt=cp>=0?45:-45;
+  const D=Math.sqrt((Ex*Ex-Ey*Ey)**2+4*Ex*Ex*Ey*Ey*cp*cp);
+  const a2=(Ex*Ex+Ey*Ey+D)/2, b2=Math.max(0,(Ex*Ex+Ey*Ey-D)/2);
+  const a=Math.sqrt(a2),b=Math.sqrt(b2);
+  return{state,hand,tilt,AR:b<5e-4?Infinity:a/b,Emax:Math.sqrt(a2),a,b};
+}
+function fillRange(el,pct){el.style.setProperty('--p',pct.toFixed(1)+'%')}
 
-  const hand = (state === 'Linear') ? 'None' : (sp > 0 ? 'RH' : 'LH');
+// ── Sync ─────────────────────────────────────────────────────────────────────
+function sync(){
+  S.Ex=parseFloat(R.ex.value); S.Ey=parseFloat(R.ey.value);
+  S.ph=parseFloat(R.ph.value); S.sp=parseFloat(R.sp.value);
+  document.getElementById('d-ex').textContent=S.Ex.toFixed(1);
+  document.getElementById('d-ey').textContent=S.Ey.toFixed(1);
+  document.getElementById('d-ph').textContent=S.ph+'°';
+  document.getElementById('d-sp').textContent=S.sp.toFixed(1)+'×';
+  document.getElementById('q-ex').textContent=S.Ex.toFixed(1);
+  document.getElementById('q-ey').textContent=S.Ey.toFixed(1);
+  document.getElementById('q-ph').textContent=phaseFrac(S.ph);
+  fillRange(R.ex,S.Ex/10*100); fillRange(R.ey,S.Ey/10*100);
+  fillRange(R.ph,S.ph/360*100); fillRange(R.sp,(S.sp-0.1)/2.9*100);
+  const p=analyse(S.Ex,S.Ey,S.ph);
+  const stEl=document.getElementById('p-state');
+  stEl.textContent=p.state; stEl.className='state-big state-'+p.state.toLowerCase();
+  const hEl=document.getElementById('p-hand');
+  hEl.innerHTML=p.hand==='RH'?'<span class="badge b-rh">RHCP</span>':
+    p.hand==='LH'?'<span class="badge b-lh">LHCP</span>':'<span class="badge b-na">N/A</span>';
+  document.getElementById('p-tilt').textContent=p.tilt.toFixed(1)+'°';
+  document.getElementById('p-ar').textContent=isFinite(p.AR)?p.AR.toFixed(2):'∞';
+  document.getElementById('p-em').textContent=p.Emax.toFixed(2);
+  document.getElementById('p-pfrac').textContent=phaseFrac(S.ph);
+  const ri=document.getElementById('rot-ind');
+  ri.textContent=p.state==='Linear'?'— LINEAR · NO ROTATION':
+    p.hand==='RH'?'↻ RHCP · CCW':'↺ LHCP · CW';
+}
+function preset(ex,ey,ph){R.ex.value=ex;R.ey.value=ey;R.ph.value=ph;sync();}
 
-  let tilt = 0;
-  if (Math.abs(Ex*Ex - Ey*Ey) > 0.01)
-    tilt = 0.5 * Math.atan2(2*Ex*Ey*cp, Ex*Ex - Ey*Ey) * 180/Math.PI;
-  else tilt = cp >= 0 ? 45 : -45;
-
-  const D  = Math.sqrt((Ex*Ex - Ey*Ey)**2 + 4*Ex*Ex*Ey*Ey*cp*cp);
-  const a2 = (Ex*Ex + Ey*Ey + D) / 2;
-  const b2 = Math.max(0, (Ex*Ex + Ey*Ey - D) / 2);
-  const a  = Math.sqrt(a2), b = Math.sqrt(b2);
-  const AR = b < 5e-4 ? Infinity : a/b;
-  return { state, hand, tilt, AR, Emax: Math.sqrt(a2), a, b };
+// ── Draw grid ─────────────────────────────────────────────────────────────────
+function drawGrid(ctx,W,H,step=32){
+  ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=1;
+  for(let x=0;x<=W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 }
 
-// ── Slider fill ───────────────────────────────────────────────────────────────
-function fillRange(el, pct) {
-  el.style.setProperty('--p', pct.toFixed(1) + '%');
-}
-
-// ── Sync UI from S ────────────────────────────────────────────────────────────
-function sync() {
-  S.Ex = parseFloat(R.ex.value);
-  S.Ey = parseFloat(R.ey.value);
-  S.ph = parseFloat(R.ph.value);
-  S.sp = parseFloat(R.sp.value);
-
-  document.getElementById('d-ex').textContent = S.Ex.toFixed(1);
-  document.getElementById('d-ey').textContent = S.Ey.toFixed(1);
-  document.getElementById('d-ph').textContent = S.ph + '°';
-  document.getElementById('d-sp').textContent = S.sp.toFixed(1) + '×';
-  document.getElementById('q-ex').textContent = S.Ex.toFixed(1);
-  document.getElementById('q-ey').textContent = S.Ey.toFixed(1);
-  document.getElementById('q-ph').textContent = phaseFrac(S.ph);
-
-  fillRange(R.ex, S.Ex / 10 * 100);
-  fillRange(R.ey, S.Ey / 10 * 100);
-  fillRange(R.ph, S.ph / 360 * 100);
-  fillRange(R.sp, (S.sp - 0.1) / 2.9 * 100);
-
-  const p = analyse(S.Ex, S.Ey, S.ph);
-
-  const stEl = document.getElementById('p-state');
-  stEl.textContent = p.state;
-  stEl.className = 'pv big state-' + p.state.toLowerCase();
-
-  const hEl = document.getElementById('p-hand');
-  if (p.hand === 'RH') hEl.innerHTML = '<span class="badge b-rh">RHCP</span>';
-  else if (p.hand === 'LH') hEl.innerHTML = '<span class="badge b-lh">LHCP</span>';
-  else hEl.innerHTML = '<span class="badge b-na">N/A</span>';
-
-  document.getElementById('p-tilt').textContent  = p.tilt.toFixed(1) + '°';
-  document.getElementById('p-ar').textContent    = isFinite(p.AR) ? p.AR.toFixed(2) : '∞';
-  document.getElementById('p-em').textContent    = p.Emax.toFixed(2);
-  document.getElementById('p-pfrac').textContent = phaseFrac(S.ph);
-
-  const ri = document.getElementById('rot-ind');
-  if (p.state === 'Linear') ri.textContent = '— LINEAR · NO ROTATION';
-  else if (p.hand === 'RH') ri.textContent = '↻ RHCP · CCW LOOKING INTO SOURCE';
-  else ri.textContent = '↺ LHCP · CW LOOKING INTO SOURCE';
-}
-
-// ── Draw grid utility ─────────────────────────────────────────────────────────
-function drawGrid(ctx, W, H, step=32) {
-  ctx.strokeStyle = 'rgba(255,255,255,0.032)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= W; x += step) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-  }
-  for (let y = 0; y <= H; y += step) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-  }
-}
-
-// ── Draw main lissajous canvas ─────────────────────────────────────────────────
-function drawMain(t) {
-  if (isTheoryView) return; // Save resources when hidden
-
-  const W = mc.width, H = mc.height;
-  const cx = W/2, cy = H/2;
-  const scl = Math.min(W, H) / 2 / 11;
-  const { Ex, Ey, ph } = S;
-  const phi = ph * Math.PI / 180;
-  const C = ctxM;
-
-  C.clearRect(0, 0, W, H);
-
-  // Grid
-  drawGrid(C, W, H, 30);
-
-  // Axes
-  C.setLineDash([4, 5]);
-  C.strokeStyle = 'rgba(255,255,255,0.12)';
-  C.lineWidth = 1;
-  C.beginPath(); C.moveTo(0, cy); C.lineTo(W, cy); C.stroke();
-  C.beginPath(); C.moveTo(cx, 0); C.lineTo(cx, H); C.stroke();
+// ── Draw main ────────────────────────────────────────────────────────────────
+function drawMain(t){
+  if(isTheory)return;
+  const W=mc.width,H=mc.height,cx=W/2,cy=H/2;
+  const scl=Math.min(W,H)/2/11;
+  const{Ex,Ey,ph}=S,phi=ph*Math.PI/180,C=ctxM;
+  C.clearRect(0,0,W,H);
+  drawGrid(C,W,H,30);
+  // axes
+  C.setLineDash([4,5]);C.strokeStyle='rgba(255,255,255,0.12)';C.lineWidth=1;
+  C.beginPath();C.moveTo(0,cy);C.lineTo(W,cy);C.stroke();
+  C.beginPath();C.moveTo(cx,0);C.lineTo(cx,H);C.stroke();
   C.setLineDash([]);
-
-  // Axis labels
-  C.font = '9px Orbitron';
-  C.fillStyle = 'rgba(0,216,255,0.5)'; C.fillText('Ex →', W - 30, cy - 6);
-  C.fillStyle = 'rgba(255,107,53,0.5)'; C.fillText('↑ Ey', cx + 5, 13);
-
-  // Tick marks on axes
-  C.strokeStyle = 'rgba(255,255,255,0.1)';
-  C.lineWidth = 1;
-  for (let i = -10; i <= 10; i += 2) {
-    if (i === 0) continue;
-    const px = cx + i * scl, py = cy - i * scl;
-    C.beginPath(); C.moveTo(px, cy-3); C.lineTo(px, cy+3); C.stroke();
-    C.beginPath(); C.moveTo(cx-3, py); C.lineTo(cx+3, py); C.stroke();
+  C.font='9px Orbitron';
+  C.fillStyle='rgba(0,216,255,0.5)';C.fillText('Ex →',W-30,cy-6);
+  C.fillStyle='rgba(255,107,53,0.5)';C.fillText('↑ Ey',cx+5,13);
+  // ticks
+  C.strokeStyle='rgba(255,255,255,0.1)';C.lineWidth=1;
+  for(let i=-10;i<=10;i+=2){
+    if(i===0)continue;
+    const px=cx+i*scl,py=cy-i*scl;
+    C.beginPath();C.moveTo(px,cy-3);C.lineTo(px,cy+3);C.stroke();
+    C.beginPath();C.moveTo(cx-3,py);C.lineTo(cx+3,py);C.stroke();
   }
-
-  // Full ellipse — ghost
+  // ghost ellipse
   C.beginPath();
-  for (let i = 0; i <= 361; i++) {
-    const tt = i * Math.PI / 180;
-    const x = cx + Ex * Math.cos(tt) * scl;
-    const y = cy - Ey * Math.cos(tt + phi) * scl;
-    i === 0 ? C.moveTo(x, y) : C.lineTo(x, y);
-  }
-  C.closePath();
-  C.strokeStyle = 'rgba(192,38,211,0.22)';
-  C.lineWidth = 1.5;
-  C.stroke();
-
-  // Full ellipse — glow stroke
+  for(let i=0;i<=361;i++){const tt=i*Math.PI/180;C.lineTo(cx+Ex*Math.cos(tt)*scl,cy-Ey*Math.cos(tt+phi)*scl);}
+  C.closePath();C.strokeStyle='rgba(192,38,211,0.2)';C.lineWidth=1.5;C.stroke();
+  // glow ellipse
   C.beginPath();
-  for (let i = 0; i <= 361; i++) {
-    const tt = i * Math.PI / 180;
-    const x = cx + Ex * Math.cos(tt) * scl;
-    const y = cy - Ey * Math.cos(tt + phi) * scl;
-    i === 0 ? C.moveTo(x, y) : C.lineTo(x, y);
-  }
-  C.closePath();
-  C.strokeStyle = '#c026d3';
-  C.lineWidth = 2;
-  C.shadowColor = '#c026d3';
-  C.shadowBlur = 14;
-  C.stroke();
-  C.shadowBlur = 0;
-
-  // Animated dot position
-  const px = cx + Ex * Math.cos(t) * scl;
-  const py = cy - Ey * Math.cos(t + phi) * scl;
-
-  // Trail
-  const TRAIL = 80;
+  for(let i=0;i<=361;i++){const tt=i*Math.PI/180;C.lineTo(cx+Ex*Math.cos(tt)*scl,cy-Ey*Math.cos(tt+phi)*scl);}
+  C.closePath();C.strokeStyle='#c026d3';C.lineWidth=2;
+  C.shadowColor='#c026d3';C.shadowBlur=14;C.stroke();C.shadowBlur=0;
+  // trail
+  const px=cx+Ex*Math.cos(t)*scl,py=cy-Ey*Math.cos(t+phi)*scl;
   C.beginPath();
-  for (let i = 0; i <= TRAIL; i++) {
-    const tt = t - (Math.PI * 0.6) * (i / TRAIL);
-    const x = cx + Ex * Math.cos(tt) * scl;
-    const y = cy - Ey * Math.cos(tt + phi) * scl;
-    i === 0 ? C.moveTo(x, y) : C.lineTo(x, y);
-  }
-  C.strokeStyle = 'rgba(232,121,249,0.65)';
-  C.lineWidth = 2.5;
-  C.shadowColor = '#e879f9';
-  C.shadowBlur = 8;
-  C.stroke();
-  C.shadowBlur = 0;
-
-  // Dashed projection lines
-  C.setLineDash([3, 4]);
-  C.lineWidth = 1;
-  C.strokeStyle = 'rgba(0,216,255,0.45)';
-  C.beginPath(); C.moveTo(px, cy); C.lineTo(px, py); C.stroke();
-  C.strokeStyle = 'rgba(255,107,53,0.45)';
-  C.beginPath(); C.moveTo(cx, py); C.lineTo(px, py); C.stroke();
+  for(let i=0;i<=80;i++){const tt=t-Math.PI*0.6*(i/80);C.lineTo(cx+Ex*Math.cos(tt)*scl,cy-Ey*Math.cos(tt+phi)*scl);}
+  C.strokeStyle='rgba(232,121,249,0.65)';C.lineWidth=2.5;
+  C.shadowColor='#e879f9';C.shadowBlur=8;C.stroke();C.shadowBlur=0;
+  // projections
+  C.setLineDash([3,4]);C.lineWidth=1;
+  C.strokeStyle='rgba(0,216,255,0.4)';C.beginPath();C.moveTo(px,cy);C.lineTo(px,py);C.stroke();
+  C.strokeStyle='rgba(255,107,53,0.4)';C.beginPath();C.moveTo(cx,py);C.lineTo(px,py);C.stroke();
   C.setLineDash([]);
-
-  // Projection dots on axes
-  C.fillStyle = 'rgba(0,216,255,0.75)';
-  C.beginPath(); C.arc(px, cy, 3, 0, Math.PI*2); C.fill();
-  C.fillStyle = 'rgba(255,107,53,0.75)';
-  C.beginPath(); C.arc(cx, py, 3, 0, Math.PI*2); C.fill();
-
-  // Radial line from center
-  C.strokeStyle = 'rgba(255,255,255,0.13)';
-  C.lineWidth = 1;
-  C.beginPath(); C.moveTo(cx, cy); C.lineTo(px, py); C.stroke();
-
-  // Main dot
-  C.fillStyle = '#ffffff';
-  C.shadowColor = '#ffffff';
-  C.shadowBlur = 18;
-  C.beginPath(); C.arc(px, py, 5.5, 0, Math.PI*2); C.fill();
-  C.shadowBlur = 0;
-
-  // Rotation direction arc (top-right corner indicator)
-  const phi2 = S.ph * Math.PI / 180;
-  const sphi = Math.sin(phi2);
-  if (Math.abs(sphi) > 0.1 && (S.Ex > 0.1 && S.Ey > 0.1)) {
-    const ax = W - 28, ay = H - 28, ar = 14;
-    const dir = sphi > 0 ? -1 : 1; // -1 = counterclockwise = RHCP
-    C.strokeStyle = sphi > 0 ? 'rgba(255,107,53,0.7)' : 'rgba(192,38,211,0.7)';
-    C.lineWidth = 2;
-    C.shadowColor = sphi > 0 ? '#ff6b35' : '#c026d3';
-    C.shadowBlur = 6;
-    C.beginPath();
-    C.arc(ax, ay, ar, 0.3, 0.3 + dir * Math.PI * 1.5, dir < 0);
-    C.stroke();
-    // Arrow head
-    const aend = 0.3 + dir * Math.PI * 1.5;
-    const ahx = ax + ar * Math.cos(aend);
-    const ahy = ay + ar * Math.sin(aend);
-    const angOffset = dir < 0 ? 0.5 : -0.5;
-    C.beginPath();
-    C.moveTo(ahx, ahy);
-    C.lineTo(ax + ar * Math.cos(aend - angOffset) * 0.7, ay + ar * Math.sin(aend - angOffset) * 0.7);
-    C.stroke();
-    C.shadowBlur = 0;
+  C.fillStyle='rgba(0,216,255,0.75)';C.beginPath();C.arc(px,cy,3,0,Math.PI*2);C.fill();
+  C.fillStyle='rgba(255,107,53,0.75)';C.beginPath();C.arc(cx,py,3,0,Math.PI*2);C.fill();
+  // radial
+  C.strokeStyle='rgba(255,255,255,0.12)';C.lineWidth=1;
+  C.beginPath();C.moveTo(cx,cy);C.lineTo(px,py);C.stroke();
+  // dot
+  C.fillStyle='#fff';C.shadowColor='#fff';C.shadowBlur=18;
+  C.beginPath();C.arc(px,py,5.5,0,Math.PI*2);C.fill();C.shadowBlur=0;
+  // rotation arc
+  const sphi=Math.sin(phi);
+  if(Math.abs(sphi)>0.1&&Ex>0.1&&Ey>0.1){
+    const ax=W-28,ay=H-28,ar=14,dir=sphi>0?-1:1;
+    C.strokeStyle=sphi>0?'rgba(255,107,53,0.7)':'rgba(192,38,211,0.7)';
+    C.lineWidth=2;C.shadowColor=sphi>0?'#ff6b35':'#c026d3';C.shadowBlur=6;
+    C.beginPath();C.arc(ax,ay,ar,0.3,0.3+dir*Math.PI*1.5,dir<0);C.stroke();
+    const aend=0.3+dir*Math.PI*1.5,ahx=ax+ar*Math.cos(aend),ahy=ay+ar*Math.sin(aend);
+    C.beginPath();C.moveTo(ahx,ahy);
+    C.lineTo(ax+ar*Math.cos(aend-(dir<0?0.5:-0.5))*0.7,ay+ar*Math.sin(aend-(dir<0?0.5:-0.5))*0.7);
+    C.stroke();C.shadowBlur=0;
   }
 }
 
 // ── Draw waveform ─────────────────────────────────────────────────────────────
-function drawWave(ctx, canvas, amp, phaseRad, color, t) {
-  if (isTheoryView) return; // Save resources when hidden
-
-  const W = canvas.width, H = canvas.height;
-  if (W < 2) return;
-  const mid = H / 2;
-  const scl = (H/2 - 10) / 10;
-  const CYCLES = 2.5;
-
-  ctx.clearRect(0, 0, W, H);
-
-  // Grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
-  for (let x = 0; x < W; x += 40) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+function drawWave(ctx,canvas,amp,phaseRad,color,t){
+  if(isTheory)return;
+  const W=canvas.width,H=canvas.height;if(W<2)return;
+  const mid=H/2,scl=(H/2-8)/10,CYCLES=2.5;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=1.8;
+  ctx.shadowColor=color;ctx.shadowBlur=5;
+  for(let px=0;px<W;px++){
+    const tl=(px/W)*CYCLES*Math.PI*2-t;
+    const y=mid-amp*Math.cos(tl+phaseRad)*scl;
+    px===0?ctx.moveTo(px,y):ctx.lineTo(px,y);
   }
-
-  // Waveform trace
-  ctx.beginPath();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.8;
-  ctx.shadowColor = color;
-  ctx.shadowBlur = 5;
-  for (let px = 0; px < W; px++) {
-    const tLocal = (px / W) * CYCLES * Math.PI * 2 - t;
-    const val = amp * Math.cos(tLocal + phaseRad);
-    const y = mid - val * scl;
-    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
-  }
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  // Moving dot (current t position shown as fraction in [0,1])
-  const norm = ((t % (CYCLES * Math.PI * 2)) + CYCLES * Math.PI * 2) % (CYCLES * Math.PI * 2);
-  const dotX = (norm / (CYCLES * Math.PI * 2)) * W;
-  const dotVal = amp * Math.cos(phaseRad); // val at tLocal = 0
-  const dotY = mid - dotVal * scl;
-  ctx.fillStyle = '#fff';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 8;
-  ctx.beginPath(); ctx.arc(dotX, dotY, 3.5, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 0;
+  ctx.stroke();ctx.shadowBlur=0;
+  const norm=((t%(CYCLES*Math.PI*2))+CYCLES*Math.PI*2)%(CYCLES*Math.PI*2);
+  const dotX=(norm/(CYCLES*Math.PI*2))*W,dotY=mid-amp*Math.cos(phaseRad)*scl;
+  ctx.fillStyle='#fff';ctx.shadowColor='#fff';ctx.shadowBlur=8;
+  ctx.beginPath();ctx.arc(dotX,dotY,3.5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 }
 
-// ── Preset setter ─────────────────────────────────────────────────────────────
-function preset(ex, ey, ph) {
-  R.ex.value = ex; R.ey.value = ey; R.ph.value = ph;
-  sync();
-}
-
-// ── Animation loop ─────────────────────────────────────────────────────────────
-let last = null;
-function frame(ts) {
-  if (!last) last = ts;
-  const dt = Math.min((ts - last) / 1000, 0.05);
-  last = ts;
-  S.t += dt * S.sp * 2.2;
-
+// ── Loop ─────────────────────────────────────────────────────────────────────
+let last=null;
+function frame(ts){
+  if(!last)last=ts;
+  const dt=Math.min((ts-last)/1000,0.05);last=ts;
+  S.t+=dt*S.sp*2.2;
   drawMain(S.t);
-
-  const phi = S.ph * Math.PI / 180;
-  drawWave(ctxX, wxc, S.Ex, 0, '#00d8ff', S.t);
-  drawWave(ctxY, wyc, S.Ey, phi, '#ff6b35', S.t);
-
+  drawWave(ctxX,wxc,S.Ex,0,'#00d8ff',S.t);
+  drawWave(ctxY,wyc,S.Ey,S.ph*Math.PI/180,'#ff6b35',S.t);
   requestAnimationFrame(frame);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-Object.values(R).forEach(r => r.addEventListener('input', sync));
-
-window.addEventListener('resize', resizeAllCanvases);
-
-resizeAllCanvases();
-sync();
-requestAnimationFrame(frame);
+Object.values(R).forEach(r=>r.addEventListener('input',sync));
+resizeAll();sync();requestAnimationFrame(frame);
 </script>
 </body>
 </html>
